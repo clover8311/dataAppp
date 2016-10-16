@@ -1,0 +1,57 @@
+Stock Checking and Prediction Application
+========================================================
+author: Yanze Song
+date: 10/15/2016
+
+Check and Predict Stock Price
+========================================================
+
+The aim of this app is to create a customized personal stock app to analyze user focused stocks.
+
+- App features
+- App function example
+- App future
+
+App features
+========================================================
+
+- Check one stock price for a perticulat date and time.
+- Predict the stock price for next 20 days.
+- Show an intuitive plot for stock prediction.
+
+App function example
+========================================================
+An example for predicting Google stock price
+```{r,echo=FALSE}
+library(quantmod)
+library(forecast)
+```
+```{r}
+dat <- getSymbols("GOOG");
+```
+```{r,echo=FALSE}
+df <- data.frame(Date=time(GOOG), GOOG, check.names=FALSE, row.names=NULL)
+stockDat <- df[,2];
+
+
+ts1 <- ts(stockDat, frequency = 261);
+preData <- stlf(ts1)
+```
+```{r}
+fcst <- forecast(preData, h = 25);
+```
+```{r,echo=FALSE}
+lastDay <- df[length(df[,1]),1];
+dateCol <- seq(as.Date(lastDay + 1), by = "day", length.out = 25);
+fcst <- data.frame(fcst);
+fcstValue <- cbind(data.frame(time=dateCol), fcst$Point.Forecast);
+colnames(fcstValue) <- c("time", "forecast")
+plot(fcstValue, xlab = "time", ylab = "forecast",type = "l", col = "blue", asp = 0.5)
+```
+
+App future
+========================================================
+In the future, we will release next version with following features:
+- 1. Add support for user picking their stock portforlio
+- 2. Add support for user entering a certain predictive period
+- 3. Optimize the webset UI
